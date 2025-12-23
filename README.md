@@ -25,7 +25,6 @@ A simple and fast program to download videos from multiple websites and platform
 
 
 
-
 ## Requirements
 
 - Python 3.8 or higher  
@@ -33,6 +32,7 @@ A simple and fast program to download videos from multiple websites and platform
 ```bash
 pip install customtkinter pillow pyperclip yt-dlp
 ```
+
 
 
 
