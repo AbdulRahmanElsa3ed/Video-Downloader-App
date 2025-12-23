@@ -13,16 +13,6 @@ A simple and fast program to download videos from multiple websites and platform
 - Uses [yt_dlp](https://github.com/yt-dlp/yt-dlp), which allows downloading from multiple platforms and websites.  
 - Built with a user-friendly interface using **CustomTkinter**.
 
-## Instructions
-
-1) Enter Video URL.
-2) Select Download Mode.
-3) Select Quality.
-4) Enter Save Path.
-5) Press Download.
-
-![image1](README_Docs/image.png)
-
 ## FFmpeg Requirement
 
 This program relies on `ffmpeg.exe` to handle video and audio processing.  
@@ -36,6 +26,16 @@ This program relies on `ffmpeg.exe` to handle video and audio processing.
 2. Download the latest version of **ffmpeg-master-latest-win64-gpl.zip**.  
 3. Get `ffmpeg.exe` from "ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe" and place it in the same folder as `main.py`.  
 
+## Instructions
+
+1) Enter Video URL.
+2) Select Download Mode.
+3) Select Quality.
+4) Enter Save Path.
+5) Press Download.
+
+![image1](README_Docs/image.png)
+
 ## Requirements
 
 - Python 3.8 or higher  
@@ -43,6 +43,7 @@ This program relies on `ffmpeg.exe` to handle video and audio processing.
 ```bash
 pip install customtkinter pillow pyperclip yt-dlp
 ```
+
 
 
 
