@@ -25,7 +25,8 @@ pip install customtkinter pillow pyperclip yt-dlp
 
 You can download the latest version of the app from the official GitHub releases:
 
-- [VideoDownloaderApp_V1.0.0.rar](https://github.com/AbdulRahmanElsa3ed/VideoDownloaderApp/releases/tag/v1.0.0)  – Initial Version
+- [VideoDownloaderApp_V1.0.0.rar](https://github.com/AbdulRahmanElsa3ed/Video-Downloader-App/releases/download/v1.0.0/VideoDownloader_V1.0.0.rar)  – Initial Version
+
 
 
 
