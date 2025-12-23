@@ -20,7 +20,7 @@ This program relies on `ffmpeg.exe` to handle video and audio processing.
 - The latest release already includes `ffmpeg.exe`, so you **don't need to download it separately**.
 
 **How to download FFmpeg.exe:**  
-1. Go to the official [FFmpeg build](https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-winarm64-lgpl.zip ).
+1. Download the official [FFmpeg build](https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-winarm64-lgpl.zip ).
 2. Get `ffmpeg.exe` from "ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe" and place it in the same folder as `main.py`.  
 
 ## Instructions
@@ -40,6 +40,7 @@ This program relies on `ffmpeg.exe` to handle video and audio processing.
 ```bash
 pip install customtkinter pillow pyperclip yt-dlp
 ```
+
 
 
 
