@@ -11,7 +11,6 @@ ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 app.iconbitmap("_images/icon.ico")
 app.resizable(False, False)
-mode = None
 can_download = True
 
 if shutil.which("ffmpeg") is None:
@@ -35,26 +34,36 @@ def paste():
     url_entry.delete(0, "end")
     url_entry.insert(0, text)
 
+def move(widget, new_x, new_y, steps=40, speed=5, callback=None):
+    old_x = widget.winfo_x()
+    old_y = widget.winfo_y()
+
+    dx = (new_x - old_x) / steps
+    dy = (new_y - old_y) / steps
+
+    def animate(step=0):
+        if step <= steps:
+            widget.place(x=old_x + dx * step, y=old_y + dy * step)
+            app.after(speed, lambda: animate(step + 1))
+        else:
+            if callback:
+                callback()
+
+    animate()
+
+def mode_changed(value):
+    if value == "Video":
+        video()
+    elif value == "Audio":
+        Audio()
+
 def video():
-    global mode
-    mode = "Video"
-    video_btn.configure(fg_color="#00D100", text_color="#000000", hover_color="#00D100")
-    audio_btn.configure(fg_color="#343638", text_color="#FFFFFF", hover_color="#00A300")
-    muted_video_btn.configure(fg_color="#343638", text_color="#FFFFFF", hover_color="#00A300")
+    move(quality_combobox, 263, 60, 40, 8)
+    move(savepath_btn, 407, 60, 40, 8, callback=mute_switch.place(x=156, y=60))
 
-def audio():
-    global mode
-    mode = "Audio"
-    audio_btn.configure(fg_color="#00D100", text_color="#000000", hover_color="#00D100")
-    video_btn.configure(fg_color="#343638", text_color="#FFFFFF", hover_color="#00A300")
-    muted_video_btn.configure(fg_color="#343638", text_color="#FFFFFF", hover_color="#00A300")
-
-def muted_video():
-    global mode
-    mode = "Muted Video"
-    muted_video_btn.configure(fg_color="#00D100", text_color="#000000", hover_color="#00D100")
-    video_btn.configure(fg_color="#343638", text_color="#FFFFFF", hover_color="#00A300")
-    audio_btn.configure(fg_color="#343638", text_color="#FFFFFF", hover_color="#00A300")
+def Audio():
+    move(quality_combobox, 156, 60, 40, 8)
+    move(savepath_btn, 300, 60, 40, 8, callback=lambda: (mute_switch.deselect()))
 
 def savepath():
     global path
@@ -161,7 +170,9 @@ def progress_hook(d):
 def download():
     url = url_entry.get()
     quality = quality_combobox.get()
-    modet = mode
+    mode = downloadmode.get()
+    if mode == "Video" and mute_switch.get() == 1:
+        mode = "Muted Video"
     global path
     global can_download
     can_download = False
@@ -172,77 +183,75 @@ def download():
         write_log("Invalid URL.\n", "red")
         can_download = True
         return
-    elif modet == None:
+    elif mode == None:
         write_log("Download mode not selected.\n", "red")
         can_download = True
         return
-    elif quality not in ["Low", "SD", "HD", "FHD"] and modet != "Audio":
+    elif quality not in ["Low", "SD", "HD", "FHD"] and mode != "Audio":
         write_log("Quality not selected.\n", "red")
         can_download = True
         return
 
-    write_downloadinfo(modet, url, quality)
+    write_downloadinfo(mode, url, quality)
     write_log("    Downloading...\n", "white")
-    if modet == "Video":
+    if mode == "Video":
         returned = download_video(url, quality, path)
         if returned == "Error":
             write_log("    An error occurred during download.\n", "red")
         elif progressbar.get() == 0.0:
             write_log(f"    This video has already been downloaded\n", "yellow")
         else:
-            write_log(f"    {modet} downloaded Successfuly\n", "green")
-    elif modet == "Audio":
+            write_log(f"    {mode} downloaded Successfuly\n", "green")
+    elif mode == "Audio":
         returned = download_audio(url, path)
         if returned == "Error":
             write_log("    An error occurred during download.\n", "red")
         elif progressbar.get() == 0.0:
             write_log(f"    This audio has already been downloaded\n", "yellow")
         else:
-            write_log(f"    {modet} downloaded Successfuly\n", "green")
-    elif modet == "Muted Video":
+            write_log(f"    {mode} downloaded Successfuly\n", "green")
+    elif mode == "Muted Video":
         returned = download_muted_video(url, quality, path)
         if returned == "Error":
             write_log("    An error occurred during download.\n", "red")
         elif progressbar.get() == 0.0:
             write_log(f"    This muted video has already been downloaded\n", "yellow")
         else:
-            write_log(f"    {modet} downloaded Successfuly\n", "green")
+            write_log(f"    {mode} downloaded Successfuly\n", "green")
     can_download = True
 
 def download_thread():
     if can_download:
         threading.Thread(target=download, daemon=True).start()
 
-
-url_entry = ctk.CTkEntry(app, 716, 40, 10, 1, font=("Ariel", 20), placeholder_text="Enter URL")
+url_entry = ctk.CTkEntry(app, 786, 40, 10, 1, font=("Ariel", 20), placeholder_text="Enter URL")
 url_entry.place(x=10, y=10)
 
-paste_btn = CTkButton(app, width=35, height=40, text="Paste", corner_radius=7, font=("Ariel", 20), command=lambda: paste())
-paste_btn.place(x=730, y=10)
+img_path = os.path.join(app_path(), "_images/paste.png")
+img = CTkImage(Image.open(img_path), size=(25,25))
+paste_btn = CTkButton(app, width=1, height=1, text="", corner_radius=7, image=img, font=("Ariel", 20), fg_color="#343638", hover_color="#343638", bg_color="#343638", command=lambda: paste())
+paste_btn.place(x=760, y=14)
 
-video_btn = CTkButton(app, 1, 40, 10, 1, font=("Ariel", 20), fg_color="#343638", hover_color="#00A300", text="Video", text_color="#FFFFFF", command=lambda: video())
-video_btn.place(x=10, y=60)
+downloadmode = CTkSegmentedButton(app, 10, 40, 10, 1, font=("Ariel", 20), values=["Video", "Audio"], command=mode_changed)
+downloadmode.place(x=10, y=60)
 
-audio_btn = CTkButton(app, 1, 40, 10, 1, font=("Ariel", 20), fg_color="#343638", hover_color="#00A300", text="Audio", text_color="#FFFFFF", command=lambda: audio())
-audio_btn.place(x=86, y=60)
+mute_switch = CTkSwitch(app, 1, 43, 50, 25, 20, 1, text="Mute", font=("Ariel", 20))
+mute_switch.place(x=158, y=60)
 
-muted_video_btn = CTkButton(app, 10, 40, 10, 1, font=("Ariel", 20), fg_color="#343638", hover_color="#00A300", text="Muted Video", text_color="#FFFFFF", command=lambda: muted_video())
-muted_video_btn.place(x=160, y=60)
-
-quality_combobox = CTkComboBox(app, 150, 40, 10,  1, fg_color="#343638", font=("Ariel", 20), values=["Low", "SD", "HD", "FHD"], dropdown_font=("Ariel", 20), state="readonly" ,command= quality_colorization) 
-quality_combobox.place(x=296, y=60)
+quality_combobox = CTkComboBox(app, 140, 40, 10,  1, fg_color="#343638", font=("Ariel", 20), values=["Low", "SD", "HD", "FHD"], dropdown_font=("Ariel", 20), state="readonly" ,command= quality_colorization) 
+quality_combobox.place(x=156, y=60)
 quality_combobox.set("Quality")
 
 img = CTkImage(Image.open("_images/savemark.png"), size=(20,20))
-savepath_btn = CTkButton(app, 150, 40, 10, 1, font=("Ariel", 20), fg_color="#343638", hover_color="#494949", text="Save Path", image=img, compound="right", command=lambda: savepath())
-savepath_btn.place(x=450, y=60)
+savepath_btn = CTkButton(app, 140, 40, 10, 1, font=("Ariel", 20), fg_color="#343638", hover_color="#494949", text="Save Path", image=img, compound="right", command=lambda: savepath())
+savepath_btn.place(x=300, y=60)
 
 progressbar = CTkProgressBar(app, 786, 10, fg_color="#494949", progress_color="#03FF18", corner_radius=17)
 progressbar.place(x=10, y=110)
 progressbar.set(0)
 
 img = CTkImage(Image.open("_images/download.png"), size=(30,30))
-download_btn = CTkButton(app, 120, 40, 10, font=("Ariel", 30), text="Download", image=img, fg_color="#000000", text_color="#FFFFFF", hover_color="#1F6AA5", compound="right", command=lambda: download_thread())
+download_btn = CTkButton(app, 120, 40, 10, font=("Ariel", 30), text="Download", image=img, text_color="#FFFFFF", compound="right", command=lambda: download_thread())
 download_btn.place(x=604, y=60)
 
 textbox = CTkTextbox(app, 786, 360, 10, 1, font=("Ariel", 20), wrap="none")
@@ -256,6 +265,5 @@ textbox.tag_config("lightYellow", foreground="#EEFF00")
 textbox.tag_config("black", foreground="#000000")
 textbox.tag_config("blue", foreground="#1a9fff")
 textbox.configure(state="disabled")
-
 
 app.mainloop()
