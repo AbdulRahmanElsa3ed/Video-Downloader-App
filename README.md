@@ -31,7 +31,9 @@ This program relies on `ffmpeg.exe` to handle video and audio processing.
 4) Enter Save Path.
 5) Press Download.
 
-![image1](README_Docs/image.png)
+![image1](README_Docs/image1.png)
+![image2](README_Docs/image2.png)
+![image3](README_Docs/image3.png)
 
 ## Requirements
 
@@ -40,6 +42,7 @@ This program relies on `ffmpeg.exe` to handle video and audio processing.
 ```bash
 pip install customtkinter pillow pyperclip yt-dlp
 ```
+
 
 
 
