@@ -59,7 +59,7 @@ def mode_changed(value):
 
 def video():
     move(quality_combobox, 263, 60, 40, 8)
-    move(savepath_btn, 407, 60, 40, 8, callback=mute_switch.place(x=156, y=60))
+    move(savepath_btn, 407, 60, 40, 8)
 
 def Audio():
     move(quality_combobox, 156, 60, 40, 8)
@@ -267,3 +267,4 @@ textbox.tag_config("blue", foreground="#1a9fff")
 textbox.configure(state="disabled")
 
 app.mainloop()
+
